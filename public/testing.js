@@ -20,7 +20,7 @@ let movieID;
 
 
 function getMovie(callback) {
-    fetch(baseURL + `/mivie{movie_id}`)
+    fetch(baseURL + `/movie{movie_id}`)
         .then((res) => res.json())
         .then((data) => {
             callback(data)
