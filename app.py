@@ -18,11 +18,9 @@ app = Flask(__name__)
 ckeditor = CKEditor(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-
 app.config['SECRET_KEY'] = "supersecretcoolthing"
+
 # Initialize The Database
-
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -290,8 +288,6 @@ def delete(id):
         flash("Sorry, you can't delete that user! ")
         return redirect(url_for('dashboard'))
 
-# Update Database Record
-
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -355,16 +351,7 @@ def add_user():
 
 @app.route('/')
 def index():
-    first_name = ""
-    stuff = "This is bold text"
-
-    favorite_pizza = ["Pepperoni", "Cheese", "Mushrooms", 41]
-    return render_template("index.html",
-                           first_name=first_name,
-                           stuff=stuff,
-                           favorite_pizza=favorite_pizza)
-
-# localhost:5000/user/John
+    return render_template("index.html")
 
 
 @app.route('/user/<name>')
