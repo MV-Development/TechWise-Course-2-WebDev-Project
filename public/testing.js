@@ -7,7 +7,7 @@ function getRequestToken(callback) {
     fetch(`${baseURL}/authentication/token/new?api_key=${APIKey}`)
         .then((res) => res.json())
         .then((data) => {
-            console.log(data);
+            //console.log(data);
             callback(data);
         });
 }
@@ -21,7 +21,7 @@ function getGuestSessionToken(callback) {
     fetch(`${baseURL}/authentication/guest_session/new?api_key=${APIKey}`)
         .then((res) => res.json())
         .then((data) => {
-            console.log(data);
+            //console.log(data);
             callback(data);
         });
 }
