@@ -87,7 +87,7 @@ def login():
                 flash("Login Succesfull!!")
                 return redirect(url_for('dashboard'))
             else:
-                flash("Wrong Password - Try Again!")
+                flash("Wrong Password - Try Again or Reset Password!")
         else:
             flash("That User Doesn't Exist! Try Again...")
 
@@ -115,7 +115,7 @@ def dashboard():
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.favorite_movie = request.form['favorite_movie']
         name_to_update.username = request.form['username']
         name_to_update.about_author = request.form['about_author']
 
@@ -263,7 +263,6 @@ def add_post():
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
-    # Check logged in id vs. id to delete
     if id == current_user.id:
         user_to_delete = Users.query.get_or_404(id)
         name = None
@@ -297,7 +296,7 @@ def update(id):
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.favorite_movie = request.form['favorite_movie']
         name_to_update.username = request.form['username']
         try:
             db.session.commit()
@@ -329,14 +328,14 @@ def add_user():
             hashed_pw = generate_password_hash(
                 form.password_hash.data, "sha256")
             user = Users(username=form.username.data, name=form.name.data, email=form.email.data,
-                         favorite_color=form.favorite_color.data, password_hash=hashed_pw)
+                         favorite_movie=form.favorite_movie.data, password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
-        form.favorite_color.data = ''
+        form.favorite_movie.data = ''
         form.password_hash.data = ''
 
         flash("User Added Successfully!")
@@ -362,8 +361,6 @@ def user(name):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
-
-# Internal Server Error
 
 
 @app.errorhandler(500)
@@ -405,7 +402,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    favorite_color = db.Column(db.String(120))
+    favorite_movie = db.Column(db.String(120))
     about_author = db.Column(db.Text(), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     profile_pic = db.Column(db.String(), nullable=True)
