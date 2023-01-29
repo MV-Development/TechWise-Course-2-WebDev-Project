@@ -1,5 +1,6 @@
 var APIKey = '46eb4bee79974ac4c17249b988d15fb8';
 const baseURL = "https://api.themoviedb.org/3";
+let sessionToken;
 
 
 let requestToken;

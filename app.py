@@ -18,7 +18,7 @@ app = Flask(__name__)
 ckeditor = CKEditor(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-
+app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "supersecretcoolthing"
 # Initialize The Database
 
