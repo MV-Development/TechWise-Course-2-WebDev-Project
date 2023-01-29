@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm
+from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm, ResetForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm
 from flask_ckeditor import CKEditor
@@ -383,7 +383,12 @@ def name():
                            form=form)
 
 
-# Create a Blog Post model
+@app.route('/reset')
+def reset():
+    form = ResetForm()
+    return render_template('reset.html', title="Forgot Password", form=form)
+
+
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
