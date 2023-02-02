@@ -4,12 +4,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm, ResetForm
+from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm, ResetForm, ChangeForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm
 from flask_ckeditor import CKEditor
+from flask_mail import Mail, Message
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.utils import secure_filename
 import uuid as uuid
+from flask_bcrypt import Bcrypt
 import os
 
 
@@ -20,11 +23,17 @@ ckeditor = CKEditor(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SECRET_KEY'] = "supersecretcoolthing"
 
-# Initialize The Database
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'mailforaproject@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Temp123??'
+
+mail = Mail(app)
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Flask_Login Stuff
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -34,15 +43,11 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
-# Pass Stuff To Navbar
-
 
 @app.context_processor
 def base():
     form = SearchForm()
     return dict(form=form)
-
-# Create Admin Page
 
 
 @app.route('/admin')
@@ -56,7 +61,6 @@ def admin():
         return redirect(url_for('dashboard'))
 
 
-# Create Search Function
 @app.route('/search', methods=["POST"])
 def search():
     form = SearchForm()
@@ -72,7 +76,6 @@ def search():
                                form=form,
                                searched=post.searched,
                                posts=posts)
-# Create Login Page
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -81,7 +84,6 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            # Check the hash
             if check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
                 flash("Login Succesfull!!")
@@ -93,7 +95,46 @@ def login():
 
     return render_template('login.html', form=form)
 
-# Create Logout Page
+
+def sendreset(user):
+    token = user.get_token()
+    message = Message('Password Reset Requested',
+                      recipient=user.email, sender='noreply@gmail.com')
+    message.body = f''' Reset your password. Click on the link.
+
+    {url_for(resettoken,token=token,_external=True)}
+    
+    '''
+
+
+@app.route('/reset', methods=['GET', 'POST'])
+def reset():
+    form = ResetForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            sendreset(user)
+            flash('Reset request sent to email.')
+            return redirect(url_for('login'))
+        else:
+            flash("That Email Is Not Registered...")
+    return render_template('reset.html', title="Forgot Password", form=form)
+
+
+@app.route('/reset/<token>', methods=['GET', 'POST'])
+def resettoken(token):
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is not going to work. Give up')
+        return redirect(url_for('reset'))
+    form = ChangeForm()
+    if form.validate_on_submit():
+        hashedpassword = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user.password = hashedpassword
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('changer.html', form=form)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -102,8 +143,6 @@ def logout():
     logout_user()
     flash("You Have Been Logged Out!  Thanks For Stopping By...")
     return redirect(url_for('login'))
-
-# Create Dashboard Page
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -119,18 +158,15 @@ def dashboard():
         name_to_update.username = request.form['username']
         name_to_update.about_author = request.form['about_author']
 
-        # Check for profile pic
         if request.files['profile_pic']:
             name_to_update.profile_pic = request.files['profile_pic']
 
-            # Grab Image Name
             pic_filename = secure_filename(name_to_update.profile_pic.filename)
-            # Set UUID
+
             pic_name = str(uuid.uuid1()) + "_" + pic_filename
-            # Save That Image
+
             saver = request.files['profile_pic']
 
-            # Change it to a string to save to db
             name_to_update.profile_pic = pic_name
             try:
                 db.session.commit()
@@ -177,7 +213,7 @@ def delete_post(id):
             return render_template("posts.html", posts=posts)
 
         except:
-            # Return an error message
+
             flash("Whoops! There was a problem deleting post, try again...")
 
             # Grab all the posts from the database
@@ -345,8 +381,6 @@ def add_user():
                            name=name,
                            our_users=our_users)
 
-# Create a route decorator
-
 
 @app.route('/')
 def index():
@@ -383,12 +417,6 @@ def name():
                            form=form)
 
 
-@app.route('/reset')
-def reset():
-    form = ResetForm()
-    return render_template('reset.html', title="Forgot Password", form=form)
-
-
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
@@ -398,8 +426,6 @@ class Posts(db.Model):
     slug = db.Column(db.String(255))
     # Foreign Key To Link Users (refer to primary key of the user)
     poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-# Create Model
 
 
 class Users(db.Model, UserMixin):
@@ -412,9 +438,20 @@ class Users(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     profile_pic = db.Column(db.String(), nullable=True)
 
-    # Do some password stuff!
+    def get_token(self, expires_sec=43200):
+        serial = Serializer(app.config['SECRET KEY'], expires_in=expires_sec)
+        return serial.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_token(token):
+        serial = Serializer(app.config['SECRET KEY'])
+        try:
+            id = serial.loads(token)['id']
+        except:
+            return None
+        return user.query.get(id)
+
     password_hash = db.Column(db.String(128))
-    # User Can Have Many Posts
     posts = db.relationship('Posts', backref='poster')
 
     @property
@@ -428,6 +465,5 @@ class Users(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    # Create A String
     def __repr__(self):
         return '<Name %r>' % self.name
