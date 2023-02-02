@@ -64,19 +64,31 @@ function clearDetails(domNode) {
 
 function populateMovieDetails(movie_id) {
     getMovieDetails((data) => {
-    (movieInfo = data)
+        (movieInfo = data)
         clearDetails(movieInfoSection);
-        for (let info in movieInfo) {
-            information = document.createElement("li");
-//            console.log(movieInfo[info]);
-            information.innerText = info + ": "  + movieInfo[info];
-            movieInfoSection.appendChild(information);
-        }
+
+        title = document.createElement("li");
+        title.innerText = movieInfo["original_title"];
+        movieInfoSection.appendChild(title);
+
+        releaseDate = document.createElement("li");
+        releaseDate.innerText = movieInfo["release_date"];
+        movieInfoSection.appendChild(releaseDate);
+
+        image = document.createElement("li");
+        image.style.height = `210px`;
+        image.style.width = `150px`;
+        image.setAttribute("src", fetch(`${baseURL} /movie/${movie_id}/images?${APIKey}&language=en-US`));
+        movieInfoSection.appendChild(image);
+
+        overview = document.createElement("li");
+        overview.innerText = movieInfo["overview"];
+        movieInfoSection.appendChild(overview);
     });
 };
 
 
 
-let movie_id = '667538';
+let movie_id = '343611';
 
 populateMovieDetails(movie_id);
