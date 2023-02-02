@@ -66,13 +66,10 @@ function populateMovieDetails(movie_id) {
     getMovieDetails((data) => {
     (movieInfo = data)
         clearDetails(movieInfoSection);
-        var information = document.createElement("li");
-        information.innerText = "Title";
-        movieInfoSection.appendChild(information);
         for (let info in movieInfo) {
             information = document.createElement("li");
 //            console.log(movieInfo[info]);
-            information.innerText = movieInfo[info];
+            information.innerText = info + ": "  + movieInfo[info];
             movieInfoSection.appendChild(information);
         }
     });
