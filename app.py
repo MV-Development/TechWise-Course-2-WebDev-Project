@@ -13,6 +13,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.utils import secure_filename
 import uuid as uuid
 from flask_bcrypt import Bcrypt
+import smtplib
 import os
 
 
@@ -66,9 +67,7 @@ def search():
     form = SearchForm()
     posts = Posts.query
     if form.validate_on_submit():
-        # Get data from submitted form
         post.searched = form.searched.data
-        # Query the Database
         posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
         posts = posts.order_by(Posts.title).all()
 
@@ -96,45 +95,18 @@ def login():
     return render_template('login.html', form=form)
 
 
-def sendreset(user):
-    token = user.get_token()
-    message = Message('Password Reset Requested',
-                      recipient=user.email, sender='noreply@gmail.com')
-    message.body = f''' Reset your password. Click on the link.
-
-    {url_for(resettoken,token=token,_external=True)}
-    
-    '''
-
-
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
     form = ResetForm()
     if form.validate_on_submit():
+        message = '''You tried to reset your password and that's great but that feature doesnt work.'''
         user = Users.query.filter_by(email=form.email.data).first()
-        if user:
-            sendreset(user)
-            flash('Reset request sent to email.')
-            return redirect(url_for('login'))
-        else:
-            flash("That Email Is Not Registered...")
+        mailServer = smtplib.SMTPL("smtp.gmail.com", 587)
+        mailServer.starttls()
+        mailServer.login("mailforaproject@gmail.com", "Temp123??")
+        mailServer.sendmail("mailforaproject@gmail.com", user, message)
+
     return render_template('reset.html', title="Forgot Password", form=form)
-
-
-@app.route('/reset/<token>', methods=['GET', 'POST'])
-def resettoken(token):
-    user = User.verify_token(token)
-    if user is None:
-        flash('That is not going to work. Give up')
-        return redirect(url_for('reset'))
-    form = ChangeForm()
-    if form.validate_on_submit():
-        hashedpassword = bcrypt.generate_password_hash(
-            form.password.data).decode('utf-8')
-        user.password = hashedpassword
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('changer.html', form=form)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -279,7 +251,7 @@ def add_post():
         poster = current_user.id
         post = Posts(title=form.title.data, content=form.content.data,
                      poster_id=poster, slug=form.slug.data)
-        # Clear The Form
+
         form.title.data = ''
         form.content.data = ''
         #form.author.data = ''
@@ -437,19 +409,6 @@ class Users(db.Model, UserMixin):
     about_author = db.Column(db.Text(), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     profile_pic = db.Column(db.String(), nullable=True)
-
-    def get_token(self, expires_sec=43200):
-        serial = Serializer(app.config['SECRET KEY'], expires_in=expires_sec)
-        return serial.dumps({'id': self.id}).decode('utf-8')
-
-    @staticmethod
-    def verify_token(token):
-        serial = Serializer(app.config['SECRET KEY'])
-        try:
-            id = serial.loads(token)['id']
-        except:
-            return None
-        return user.query.get(id)
 
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Posts', backref='poster')
