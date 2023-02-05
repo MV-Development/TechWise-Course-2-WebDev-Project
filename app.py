@@ -12,6 +12,7 @@ from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.utils import secure_filename
 import uuid as uuid
+from flask_mail import Mail
 from flask_bcrypt import Bcrypt
 import smtplib
 import os
@@ -24,11 +25,12 @@ ckeditor = CKEditor(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SECRET_KEY'] = "supersecretcoolthing"
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '0e7e0a375afc84'
+app.config['MAIL_PASSWORD'] = 'cad36f0bd1d1b3'
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'mailforaproject@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Temp123??'
+app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
 
@@ -111,7 +113,14 @@ def reset():
 
 @app.route('/goodjob', methods=['GET', 'POST'])
 def goodjob():
-    return render_template('goodjob.html')
+    email = request.form.get("email")
+    message = '''You tried to reset your password and that's great but that feature doesnt work.'''
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
+    server.sendmail("mailforaproject@gmail.com", email, message)
+
+    return render_template('goodjob.html', email=email)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
