@@ -114,13 +114,13 @@ def reset():
 @app.route('/goodjob', methods=['GET', 'POST'])
 def goodjob():
     email = request.form.get("email")
-    message = '''You tried to reset your password and that's great but that feature doesnt work.'''
+    user = Users.query.filter_by(email=email).first()
+    message = "HEYO"
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
     server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
     server.sendmail("mailforaproject@gmail.com", email, message)
-
-    return render_template('goodjob.html', email=email)
+    return render_template('goodjob.html', email=email, user=user.name)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -255,7 +255,6 @@ def edit_post(id):
         return render_template("posts.html", posts=posts)
 
 
-# Add Post Page
 @app.route('/add-post', methods=['GET', 'POST'])
 # @login_required
 def add_post():
@@ -426,6 +425,10 @@ class Users(db.Model, UserMixin):
 
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Posts', backref='poster')
+
+    def get_token(self, expires_sec=15000):
+        serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
+        return serial.dumps({'user_id': self.id}).decode('utf-8')
 
     @property
     def password(self):
