@@ -109,6 +109,11 @@ def reset():
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
+@app.route('/goodjob', methods=['GET', 'POST'])
+def goodjob():
+    return render_template('goodjob.html')
+
+
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
