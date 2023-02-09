@@ -4,14 +4,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm
+from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm, SearchForm, ResetForm, ChangeForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, PostForm, UserForm, PasswordForm, NamerForm
 from flask_ckeditor import CKEditor
+from flask_mail import Mail, Message
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.utils import secure_filename
 import uuid as uuid
+from flask_mail import Mail
+from flask_bcrypt import Bcrypt
+import smtplib
 import os
-
 
 app = Flask(__name__)
 
@@ -20,7 +24,6 @@ ckeditor = CKEditor(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "supersecretcoolthing"
-# Initialize The Database
 
 
 db = SQLAlchemy(app)
@@ -44,7 +47,17 @@ def base():
     form = SearchForm()
     return dict(form=form)
 
-# Create Admin Page
+
+@app.route('/goodjob', methods=['GET', 'POST'])
+def goodjob():
+    email = request.form.get("email")
+    user = Users.query.filter_by(email=email).first()
+    message = "HEYO"
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
+    server.sendmail("mailforaproject@gmail.com", email, message)
+    return render_template('goodjob.html', email=email, user=user.name)
 
 
 @app.route('/admin')
@@ -74,7 +87,6 @@ def search():
                                form=form,
                                searched=post.searched,
                                posts=posts)
-# Create Login Page
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -248,7 +260,6 @@ def add_post():
         # Clear The Form
         form.title.data = ''
         form.content.data = ''
-        #form.author.data = ''
         form.slug.data = ''
 
         # Add post data to database
@@ -350,8 +361,6 @@ def add_user():
                            name=name,
                            our_users=our_users)
 
-# Create a route decorator
-
 
 @app.route('/')
 def index():
@@ -364,8 +373,6 @@ def index():
                            stuff=stuff,
                            favorite_pizza=favorite_pizza)
 
-# localhost:5000/user/John
-
 
 @app.route('/user/<name>')
 def user(name):
@@ -375,8 +382,6 @@ def user(name):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
-
-# Internal Server Error
 
 
 @app.errorhandler(500)

@@ -13,28 +13,20 @@ get_flashed_messages() %}
 
 {% endfor %}
 
-<h1>Login!</h1>
+<h1>Reset Password</h1>
 <br /><br />
 
 <div class="shadow p-3 mb-5 bg-body rounded">
-  <form method="POST">
-    {{ form.hidden_tag() }} {{ form.username.label(class="form-label") }} {{
-    form.username(class="form-control") }}
-    <br />
-
-    {{ form.password.label(class="form-label") }} {{
-    form.password(class="form-control") }}
+  <form action="/goodjob" method="POST">
+    {{ form.hidden_tag() }} {{ form.email.label(class="form-label") }} {{
+    form.email(class="form-control") }}
     <br />
 
     <br />
 
-    {{ form.submit(class="btn btn-secondary") }}
+    {{ form.submit(class="btn btn-primary") }}
 
     <br />
-
-    <br />
-
-    <a href="{{url_for('reset')}}">Forgot Password?</a>
   </form>
 </div>
 
