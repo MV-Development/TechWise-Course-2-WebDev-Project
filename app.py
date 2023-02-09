@@ -100,14 +100,6 @@ def login():
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
     form = ResetForm()
-    if form.validate_on_submit():
-        message = '''You tried to reset your password and that's great but that feature doesnt work.'''
-        user = Users.query.filter_by(email=form.email.data).first()
-        mailServer = smtplib.SMTPL("smtp.gmail.com", 587)
-        mailServer.starttls()
-        mailServer.login("mailforaproject@gmail.com", "Temp123??")
-        mailServer.sendmail("mailforaproject@gmail.com", user, message)
-
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
