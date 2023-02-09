@@ -111,6 +111,10 @@ def reset():
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
+def sendMail():
+    pass
+
+
 @app.route('/goodjob', methods=['GET', 'POST'])
 def goodjob():
     email = request.form.get("email")
