@@ -17,19 +17,26 @@ from flask_bcrypt import Bcrypt
 import smtplib
 import os
 
+
 app = Flask(__name__)
 
 ckeditor = CKEditor(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "supersecretcoolthing"
 
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '0e7e0a375afc84'
+app.config['MAIL_PASSWORD'] = 'cad36f0bd1d1b3'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Flask_Login Stuff
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -39,25 +46,11 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
-# Pass Stuff To Navbar
-
 
 @app.context_processor
 def base():
     form = SearchForm()
     return dict(form=form)
-
-
-@app.route('/goodjob', methods=['GET', 'POST'])
-def goodjob():
-    email = request.form.get("email")
-    user = Users.query.filter_by(email=email).first()
-    message = "HEYO"
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
-    server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
-    server.sendmail("mailforaproject@gmail.com", email, message)
-    return render_template('goodjob.html', email=email, user=user.name)
 
 
 @app.route('/admin')
@@ -71,15 +64,12 @@ def admin():
         return redirect(url_for('dashboard'))
 
 
-# Create Search Function
 @app.route('/search', methods=["POST"])
 def search():
     form = SearchForm()
     posts = Posts.query
     if form.validate_on_submit():
-        # Get data from submitted form
         post.searched = form.searched.data
-        # Query the Database
         posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
         posts = posts.order_by(Posts.title).all()
 
@@ -95,19 +85,42 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            # Check the hash
             if check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
                 flash("Login Succesfull!!")
                 return redirect(url_for('dashboard'))
             else:
-                flash("Wrong Password - Try Again!")
+                flash("Wrong Password - Try Again or Reset Password!")
         else:
             flash("That User Doesn't Exist! Try Again...")
 
     return render_template('login.html', form=form)
 
-# Create Logout Page
+
+@app.route('/reset', methods=['GET', 'POST'])
+def reset():
+    form = ResetForm()
+    if form.validate_on_submit():
+        message = '''You tried to reset your password and that's great but that feature doesnt work.'''
+        user = Users.query.filter_by(email=form.email.data).first()
+        mailServer = smtplib.SMTPL("smtp.gmail.com", 587)
+        mailServer.starttls()
+        mailServer.login("mailforaproject@gmail.com", "Temp123??")
+        mailServer.sendmail("mailforaproject@gmail.com", user, message)
+
+    return render_template('reset.html', title="Forgot Password", form=form)
+
+
+@app.route('/goodjob', methods=['GET', 'POST'])
+def goodjob():
+    email = request.form.get("email")
+    user = Users.query.filter_by(email=email).first()
+    message = "HEYO"
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
+    server.sendmail("mailforaproject@gmail.com", email, message)
+    return render_template('goodjob.html', email=email, user=user.name)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -116,8 +129,6 @@ def logout():
     logout_user()
     flash("You Have Been Logged Out!  Thanks For Stopping By...")
     return redirect(url_for('login'))
-
-# Create Dashboard Page
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -129,22 +140,19 @@ def dashboard():
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.favorite_movie = request.form['favorite_movie']
         name_to_update.username = request.form['username']
         name_to_update.about_author = request.form['about_author']
 
-        # Check for profile pic
         if request.files['profile_pic']:
             name_to_update.profile_pic = request.files['profile_pic']
 
-            # Grab Image Name
             pic_filename = secure_filename(name_to_update.profile_pic.filename)
-            # Set UUID
+
             pic_name = str(uuid.uuid1()) + "_" + pic_filename
-            # Save That Image
+
             saver = request.files['profile_pic']
 
-            # Change it to a string to save to db
             name_to_update.profile_pic = pic_name
             try:
                 db.session.commit()
@@ -191,7 +199,7 @@ def delete_post(id):
             return render_template("posts.html", posts=posts)
 
         except:
-            # Return an error message
+
             flash("Whoops! There was a problem deleting post, try again...")
 
             # Grab all the posts from the database
@@ -247,7 +255,6 @@ def edit_post(id):
         return render_template("posts.html", posts=posts)
 
 
-# Add Post Page
 @app.route('/add-post', methods=['GET', 'POST'])
 # @login_required
 def add_post():
@@ -257,9 +264,10 @@ def add_post():
         poster = current_user.id
         post = Posts(title=form.title.data, content=form.content.data,
                      poster_id=poster, slug=form.slug.data)
-        # Clear The Form
+
         form.title.data = ''
         form.content.data = ''
+        #form.author.data = ''
         form.slug.data = ''
 
         # Add post data to database
@@ -276,7 +284,6 @@ def add_post():
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
-    # Check logged in id vs. id to delete
     if id == current_user.id:
         user_to_delete = Users.query.get_or_404(id)
         name = None
@@ -301,8 +308,6 @@ def delete(id):
         flash("Sorry, you can't delete that user! ")
         return redirect(url_for('dashboard'))
 
-# Update Database Record
-
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -312,7 +317,7 @@ def update(id):
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.favorite_movie = request.form['favorite_movie']
         name_to_update.username = request.form['username']
         try:
             db.session.commit()
@@ -344,14 +349,14 @@ def add_user():
             hashed_pw = generate_password_hash(
                 form.password_hash.data, "sha256")
             user = Users(username=form.username.data, name=form.name.data, email=form.email.data,
-                         favorite_color=form.favorite_color.data, password_hash=hashed_pw)
+                         favorite_movie=form.favorite_movie.data, password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
-        form.favorite_color.data = ''
+        form.favorite_movie.data = ''
         form.password_hash.data = ''
 
         flash("User Added Successfully!")
@@ -364,14 +369,7 @@ def add_user():
 
 @app.route('/')
 def index():
-    first_name = ""
-    stuff = "This is bold text"
-
-    favorite_pizza = ["Pepperoni", "Cheese", "Mushrooms", 41]
-    return render_template("index.html",
-                           first_name=first_name,
-                           stuff=stuff,
-                           favorite_pizza=favorite_pizza)
+    return render_template("index.html")
 
 
 @app.route('/user/<name>')
@@ -404,7 +402,6 @@ def name():
                            form=form)
 
 
-# Create a Blog Post model
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
@@ -415,23 +412,23 @@ class Posts(db.Model):
     # Foreign Key To Link Users (refer to primary key of the user)
     poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-# Create Model
-
 
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    favorite_color = db.Column(db.String(120))
+    favorite_movie = db.Column(db.String(120))
     about_author = db.Column(db.Text(), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     profile_pic = db.Column(db.String(), nullable=True)
 
-    # Do some password stuff!
     password_hash = db.Column(db.String(128))
-    # User Can Have Many Posts
     posts = db.relationship('Posts', backref='poster')
+
+    def get_token(self, expires_sec=15000):
+        serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
+        return serial.dumps({'user_id': self.id}).decode('utf-8')
 
     @property
     def password(self):
@@ -444,6 +441,5 @@ class Users(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    # Create A String
     def __repr__(self):
         return '<Name %r>' % self.name
