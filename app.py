@@ -70,7 +70,7 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            if check_password_hash(user.password_hash, form.password.data):
+            if user.password_hash == form.password.data:
                 login_user(user)
                 flash("Login Succesfull!!")
                 return redirect(url_for('dashboard'))
@@ -155,6 +155,7 @@ def dashboard():
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
         name_to_update.favorite_movie = request.form['favorite_movie']
+        name_to_update.password_hash = request.form['password_hash']
         name_to_update.username = request.form['username']
         name_to_update.about_author = request.form['about_author']
 
@@ -260,10 +261,10 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
             # Hash the password!!!
-            hashed_pw = generate_password_hash(
-                form.password_hash.data, "sha256")
+            # hashed_pw = generate_password_hash(
+            # form.password_hash.data, "sha256")
             user = Users(username=form.username.data, name=form.name.data, email=form.email.data,
-                         favorite_movie=form.favorite_movie.data, password_hash=hashed_pw)
+                         favorite_movie=form.favorite_movie.data, password_hash=form.password_hash.data)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
