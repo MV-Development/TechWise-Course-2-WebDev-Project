@@ -8,6 +8,10 @@ from flask_wtf.file import FileField
 
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators=[DataRequired()])
+    password_hash = PasswordField('Password', validators=[DataRequired(), EqualTo(
+        'password_hash2', message='Passwords Must Match!')])
+    password_hash2 = PasswordField(
+        'Confirm Password', validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
@@ -18,14 +22,19 @@ class LoginForm(FlaskForm):
 
 
 class ChangeForm(FlaskForm):
-    password = PasswordField("Password", validators=[DataRequired()])
-    confirmpassword = PasswordField(
+    password_hash = PasswordField('Password', validators=[DataRequired(), EqualTo(
+        'password_hash2', message='Passwords Must Match!')])
+    password_hash2 = PasswordField(
         'Confirm Password', validators=[DataRequired()])
     submit = SubmitField("CHANGE!")
 
 
 class ResetForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
+    password_hash = PasswordField('Password', validators=[DataRequired(), EqualTo(
+        'password_hash2', message='Passwords Must Match!')])
+    password_hash2 = PasswordField(
+        'Confirm Password', validators=[DataRequired()])
     submit = SubmitField("Reset")
 
 

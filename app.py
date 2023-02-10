@@ -64,21 +64,6 @@ def admin():
         return redirect(url_for('dashboard'))
 
 
-@app.route('/search', methods=["POST"])
-def search():
-    form = SearchForm()
-    posts = Posts.query
-    if form.validate_on_submit():
-        post.searched = form.searched.data
-        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
-        posts = posts.order_by(Posts.title).all()
-
-        return render_template("search.html",
-                               form=form,
-                               searched=post.searched,
-                               posts=posts)
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -111,7 +96,7 @@ def reset():
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
-def sendMail():
+def sendMail(user):
     pass
 
 
@@ -119,12 +104,37 @@ def sendMail():
 def goodjob():
     email = request.form.get("email")
     user = Users.query.filter_by(email=email).first()
-    message = "HEYO"
+
+    token = user.get_token()
+
+    message = f'''
+    Click link to reset password.
+
+    goodjob/''' + token
+
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
     server.login("mailforaproject@gmail.com", "gbyuvcjipeultrci")
     server.sendmail("mailforaproject@gmail.com", email, message)
     return render_template('goodjob.html', email=email, user=user.name)
+
+
+@app.route('/goodjob/<token>', methods=['GET', 'POST'])
+def resetToken(token):
+    user = Users.verify_token(token)
+    if user is None:
+        flash('Invalid Reset Token')
+        return redirect(url_for('reset'))
+    form = ResetForm()
+    if form.validate_on_submit():
+        hashed_pw = generate_password_hash(
+            form.password.data, "sha256")
+        user.password = hashed_pw
+        db.session.commit()
+        print('worked')
+        flash('Password actually changed correctly')
+        return redirect(url_for('login'))
+    return render_template('changepass.html', user=user)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -183,106 +193,6 @@ def dashboard():
                                id=id)
 
     return render_template('dashboard.html')
-
-
-@app.route('/posts/delete/<int:id>')
-@login_required
-def delete_post(id):
-    post_to_delete = Posts.query.get_or_404(id)
-    id = current_user.id
-    if id == post_to_delete.poster.id or id == 14:
-        try:
-            db.session.delete(post_to_delete)
-            db.session.commit()
-
-            # Return a message
-            flash("Blog Post Was Deleted!")
-
-            # Grab all the posts from the database
-            posts = Posts.query.order_by(Posts.date_posted)
-            return render_template("posts.html", posts=posts)
-
-        except:
-
-            flash("Whoops! There was a problem deleting post, try again...")
-
-            # Grab all the posts from the database
-            posts = Posts.query.order_by(Posts.date_posted)
-            return render_template("posts.html", posts=posts)
-    else:
-        # Return a message
-        flash("You Aren't Authorized To Delete That Post!")
-
-        # Grab all the posts from the database
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html", posts=posts)
-
-
-@app.route('/posts')
-def posts():
-    # Grab all the posts from the database
-    posts = Posts.query.order_by(Posts.date_posted)
-    return render_template("posts.html", posts=posts)
-
-
-@app.route('/posts/<int:id>')
-def post(id):
-    post = Posts.query.get_or_404(id)
-    return render_template('post.html', post=post)
-
-
-@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_post(id):
-    post = Posts.query.get_or_404(id)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        #post.author = form.author.data
-        post.slug = form.slug.data
-        post.content = form.content.data
-        # Update Database
-        db.session.add(post)
-        db.session.commit()
-        flash("Post Has Been Updated!")
-        return redirect(url_for('post', id=post.id))
-
-    if current_user.id == post.poster_id or current_user.id == 14:
-        form.title.data = post.title
-        #form.author.data = post.author
-        form.slug.data = post.slug
-        form.content.data = post.content
-        return render_template('edit_post.html', form=form)
-    else:
-        flash("You Aren't Authorized To Edit This Post...")
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html", posts=posts)
-
-
-@app.route('/add-post', methods=['GET', 'POST'])
-# @login_required
-def add_post():
-    form = PostForm()
-
-    if form.validate_on_submit():
-        poster = current_user.id
-        post = Posts(title=form.title.data, content=form.content.data,
-                     poster_id=poster, slug=form.slug.data)
-
-        form.title.data = ''
-        form.content.data = ''
-        #form.author.data = ''
-        form.slug.data = ''
-
-        # Add post data to database
-        db.session.add(post)
-        db.session.commit()
-
-        # Return a Message
-        flash("Blog Post Submitted Successfully!")
-
-    # Redirect to the webpage
-    return render_template("add_post.html", form=form)
 
 
 @app.route('/delete/<int:id>')
@@ -432,7 +342,16 @@ class Users(db.Model, UserMixin):
 
     def get_token(self, expires_sec=15000):
         serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
-        return serial.dumps({'user_id': self.id}).decode('utf-8')
+        return serial.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_token(token):
+        serial = Serializer(app.config['SECRET_KEY'])
+        try:
+            id = serial.loads(token)['id']
+        except:
+            return None
+        return Users.query.get(id)
 
     @property
     def password(self):
