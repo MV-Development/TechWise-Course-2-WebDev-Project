@@ -96,10 +96,6 @@ def reset():
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
-def sendMail(user):
-    pass
-
-
 @app.route('/goodjob', methods=['GET', 'POST'])
 def goodjob():
     email = request.form.get("email")
@@ -121,20 +117,31 @@ def goodjob():
 
 @app.route('/goodjob/<token>', methods=['GET', 'POST'])
 def resetToken(token):
-    user = Users.verify_token(token)
+    name_to_update = Users.verify_token(token)
     if user is None:
         flash('Invalid Reset Token')
         return redirect(url_for('reset'))
     form = ResetForm()
-    if form.validate_on_submit():
-        hashed_pw = generate_password_hash(
-            form.password.data, "sha256")
-        user.password = hashed_pw
+    if request.method == "POST":
+        name_to_update.password_hash = request.form['password_hash']
         db.session.commit()
-        print('worked')
-        flash('Password actually changed correctly')
-        return redirect(url_for('login'))
-    return render_template('changepass.html', user=user)
+        try:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template("changepass.html",
+                                   form=form,
+                                   name_to_update=name_to_update, id=id)
+        except:
+            flash("Error!  Looks like there was a problem...try again!")
+            return render_template("changepass.html",
+                                   form=form,
+                                   name_to_update=name_to_update,
+                                   id=id)
+    else:
+        return render_template("changepass.html",
+                               form=form,
+                               name_to_update=name_to_update,
+                               id=id)
 
 
 @app.route('/logout', methods=['GET', 'POST'])

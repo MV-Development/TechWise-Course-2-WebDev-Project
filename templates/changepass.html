@@ -13,16 +13,18 @@ get_flashed_messages() %}
 
 {% endfor %}
 
-<h1>Change Password for {{user}}</h1>
+<h1>Change Password for {{name_to_update}}</h1>
 <br />
 <div class="shadow p-3 mb-5 bg-body rounded">
   <form method="POST">
     {{ form.password_hash.label(class="form-label") }} {{
-    form.password_hash(class="form-control", value=user.password) }}
+    form.password_hash(class="form-control", value=name_to_update.password_hash)
+    }}
     <br />
 
-    {{ form.password_hash2.label(class="form-label") }} {{
-    form.password_hash2(class="form-control", value=user.password) }}
+    {{ form.password_hash.label(class="form-label") }} {{
+    form.password_hash(class="form-control", value=name_to_update.password_hash)
+    }}
     <br />
 
     {{ form.submit(class="btn btn-secondary") }}

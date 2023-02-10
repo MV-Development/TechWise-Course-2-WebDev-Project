@@ -30,7 +30,11 @@ class ChangeForm(FlaskForm):
 
 
 class ResetForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
+    username = StringField("Username", validators=[DataRequired()])
+    favorite_movie = StringField("Favorite Movie")
+    about_author = TextAreaField("About Author")
     password_hash = PasswordField('Password', validators=[DataRequired(), EqualTo(
         'password_hash2', message='Passwords Must Match!')])
     password_hash2 = PasswordField(
