@@ -51,7 +51,7 @@ class UserForm(FlaskForm):
     favorite_movie = StringField("Favorite Movie")
     about_author = TextAreaField("About Author")
     password_hash = PasswordField('Password', validators=[DataRequired(), EqualTo(
-        'password_hash2', message='Passwords Must Match!')])
+        'password_hash2', message='Password Needs To Match!')])
     password_hash2 = PasswordField(
         'Confirm Password', validators=[DataRequired()])
     profile_pic = FileField("Profile Pic")
