@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
+<body>
+
+  <input id="searchbar" onkeyup="search_movies()" type="text"
+        name="search" placeholder="Search movies...">
+    <p>Movie Details</p>
+    <ol id="movieInfo">
+       <li>
+
+       </li>
+    </ol>
+    <script src="./movieDetails.js"></script>
+</body>
+
+
+{% endblock %}

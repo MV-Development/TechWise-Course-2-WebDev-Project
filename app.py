@@ -202,6 +202,37 @@ def dashboard():
 
     return render_template('dashboard.html')
 
+@app.route('/movies', methods=['GET', 'POST'])
+@login_required
+def movies():
+    form = UserForm()
+    id = current_user.id
+    name_to_update = Users.query.get_or_404(id)
+    if request.method == "POST":
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        name_to_update.favorite_movie = request.form['favorite_movie']
+
+        if request.files['profile_pic']:
+            name_to_update.profile_pic = request.files['profile_pic']
+
+            pic_filename = secure_filename(name_to_update.profile_pic.filename)
+
+
+            
+        else:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template("movieDetails.html",
+                                   form=form,
+                                   name_to_update=name_to_update)
+    else:
+        return render_template("movieDetails.html",
+                               form=form,
+                               name_to_update=name_to_update,
+                               id=id)
+
+    return render_template('movieDetails.html')
 
 @app.route('/delete/<int:id>')
 @login_required
