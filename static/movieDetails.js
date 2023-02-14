@@ -1,7 +1,8 @@
 var APIKey = '46eb4bee79974ac4c17249b988d15fb8';
 const baseURL = "https://api.themoviedb.org/3";
 let sessionToken;
-
+let searchBar = document.getElementById("searchBar");
+let movies = document.getElementById("movies");
 /*
 let requestToken;
 function getRequestToken(callback) {
@@ -38,7 +39,21 @@ getGuestSessionToken((data) => {
 
 
 */
+$(document).ready(() => {
+    $("#searchBar").on("submit", e => {
+      let search_text = $("#searchText").val();
+      searchMovies(search_text);
+      e.preventDefault();
+    });
+  });
 
+function searchMovies(search_text) {
+    return fetch(`${baseURL}/search/movie?api_key=${APIKey}&language=en-US&query=` + search_text)
+        .then((res) => res.json()) 
+        .then((res) => {
+            console.log(res)
+        }
+        );};
 
 const movieInfoSection = document.querySelector('#movieInfo');
 let movieInfo;
@@ -47,25 +62,24 @@ function getMovieDetails(callback) {
         .then((res) => res.json())
         .then((data) => 
             callback(data)
-        );}
+        );};
 
 
 
 
-
-function clearDetails(domNode) {
+/*function clearDetails(domNode) {
     while (domNode.firstChild) {
         domNode.removeChild(domNode.firstChild);
     }
 }
+*/
 
 
 
-
-function populateMovieDetails(movie_id) {
+/*function populateMovieDetails(movie_id) {
     getMovieDetails((data) => {
         (movieInfo = data)
-        clearDetails(movieInfoSection);
+        //clearDetails(movieInfoSection);
 
         title = document.createElement("li");
         title.innerText = movieInfo["original_title"];
@@ -78,7 +92,7 @@ function populateMovieDetails(movie_id) {
         image = document.createElement("li");
         image.style.height = `210px`;
         image.style.width = `150px`;
-        image.setAttribute("src", fetch(`${baseURL} /movie/${movie_id}/images?${APIKey}&language=en-US`));
+        image.setAttribute("src", fetch(`${baseURL}/movie/${movie_id}/images?${APIKey}&language=en-US`));
         movieInfoSection.appendChild(image);
 
         overview = document.createElement("li");
@@ -91,4 +105,4 @@ function populateMovieDetails(movie_id) {
 
 let movie_id = '343611';
 
-populateMovieDetails(movie_id);
+populateMovieDetails(movie_id);*/
