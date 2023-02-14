@@ -12,3 +12,7 @@ body {
 	font-size: 12px;
 	color: darkblue;
 }
+
+#movie-container h5 {
+	font-size: 12px;
+}
