@@ -1,11 +1,20 @@
 h1 {
-	color: darkblue;
+	color: ivory;
+	text-align: center;
 	font-size:60px;
+	font-family: "Rockwell", "Rockwell";
+}
+
+h2 {
+	font-family: "Rockwell", "Rockwell";
+	font-size: 50px;
+	text-align: center;
+	color: ivory;
 }
 
 body {
-	background: #000000;
-	background: url("/static/images/logo.png");
+	background: #212529;
+	font-family: "Rockwell", "Rockwell";
 }
 
 #demo{
@@ -15,4 +24,11 @@ body {
 
 #movie-container h5 {
 	font-size: 12px;
+}
+
+.navbar-brand {
+	height: 80px;
+	font-family: "Rockwell", "Rockwell";
+	font-size: 30px;
+	color: #2879C0;
 }

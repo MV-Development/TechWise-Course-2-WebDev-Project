@@ -4,19 +4,21 @@
 
 {% for message in get_flashed_messages() %}
 	
-	<div class="alert alert-warning alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
+	  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+	    {{ message }}
+	    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  </div>
 
 	
 {% endfor %}
 
-<body>
+<!--<body>-->
+<h3 class="text-center">Enter Movie Name</h3>
+<br/>
 
   <div class="container">
     <div class="jumbotron">
-      <h3 class="text-center">Enter Movie Name</h3>
+      <!--<h3 class="text-center">Enter Movie Name</h3>-->
       <form id="searchBar">
         <input type="text" class="form-control" id="searchText" placeholder="Search Movies..."/>
       </form>
@@ -27,10 +29,10 @@
     <div id="movies" class="row"></div>
   </div>
   <script src="{{ url_for('static', filename='jquery.js') }}"></script>
-  <script type="module" src="{{url_for('static', filename='movieDetails.js')}}"></script>
+  <script src="{{url_for('static', filename='movieDetails.js')}}"></script>
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/movies.css') }}">
 
-</body>
+<!--</body>-->
 
 
 {% endblock %}

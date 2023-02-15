@@ -11,16 +11,26 @@
     margin: 10px;
     margin-right: 13px;
 }
+
+h3{
+    font-family: "Rockwell", "Rockwell";
+	font-size: 50px;
+	text-align: center;
+	color: ivory;
+}
+
 #movies {
     position: absolute;
     margin-left: -5px;
 }
-img {
+
+.posters {
     margin-top: 10px;
     width: 200px;
     height: 300px;
     cursor: pointer;
 }
+
 .caption {
     display: block;
 }
@@ -47,6 +57,11 @@ img {
     background-color: beige;
     margin: 10px;
 }
+
+.title, .desc, .genre{
+    color: white;
+}
+
 #page-buttons {
     margin-left: 35%;
     padding: 20px;
@@ -60,4 +75,5 @@ img {
     width: 100px;
     height: 50px;
 }
+
 
