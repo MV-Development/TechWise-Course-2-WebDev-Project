@@ -95,8 +95,26 @@ div#page-buttons.movie-container{
     margin: 10px;
 }
 
+
 .row {
     justify-content: center;
+}
+
+.poster{
+    float: left;
+    margin: 25px 25px 15px 0px;
+}
+.title {
+    margin-bottom: 50px;
+    font-size: 28px;
+}
+.desc {
+    font-size: 18px;
+}
+
+.genre {
+    font-size: 15px;
+    display: flex;
 }
 
 

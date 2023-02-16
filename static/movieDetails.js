@@ -94,10 +94,12 @@ function getMovieDetails(movie_id) {
             console.log(data)
             let display = "";
             let movie = data;
+
             display += `
             <div class="selected-movie">
                 <img class="poster" src="https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}"><br>
                 <span class="title">${movie.original_title}</span><br>
+                <br>
                 <span class="desc">${movie.overview}</span><br>
             </div>
             `
