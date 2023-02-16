@@ -5,9 +5,9 @@
     text-align: center;
     width: 300px;
     border: solid;
-    border-color: darkorange;
+    border-color: #212529;
     border-width: 4px;
-    background-color: beige;
+    background: #212529;
     margin: 10px;
     margin-right: 13px;
 }
@@ -29,10 +29,12 @@ h3{
     width: 200px;
     height: 300px;
     cursor: pointer;
+
 }
 
 .caption {
     display: block;
+    color: white;
 }
 #searchBar {
     position: center;

@@ -60,7 +60,7 @@ function searchMovies(search_text, page) {
             $.each(movies, (i, movie) => {
             display += `
             <div class="movie-container">
-                <img class="posters" data-value="${movie.id}" src="https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}" onerror="this.onerror=null; this.src='static/images/head.png';">
+                <img class="posters" data-value="${movie.id}" src="https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}" onerror="this.onerror=null; this.src='static/images/no-image-icon.png';">
                 <span class="caption">${movie.original_title}</span>
             </div>
         `;
