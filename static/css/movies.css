@@ -45,6 +45,10 @@ h3{
     color: white;
 }
 
+.recname {
+    color: white;
+}
+
 #searchBar {
     position: center;
     margin-top: 20px;
