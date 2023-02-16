@@ -84,5 +84,12 @@ h3{
     height: 50px;
 }
 
+div#page-buttons.movie-container{
+    margin: 10px;
+}
+
+.row {
+    justify-content: center;
+}
 
 
