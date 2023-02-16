@@ -23,6 +23,64 @@ function getTrending() {
         
       })
       $("#movies").html(display);
+      $(".posters").click(e => {
+        getMovieDetails(e.target.dataset.value);
+      })
     })
 };
+
+function getMovieDetails(movie_id) {
+    return fetch(`${baseURL}/movie/${movie_id}?api_key=${APIKey}&language=en-US`)
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data)
+            let display = "";
+            let movie = data;
+            display += `
+            <div class="selected-movie">
+                <img class="poster" src="https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}"><br>
+                <span class="title">${movie.original_title}</span><br>
+                <span class="desc">${movie.overview}</span><br>
+            </div>
+            `
+            $.each(movie.genres, (i, genre) => {
+                display += `<span class="genre">${genre.name} </span>`
+
+            })
+            
+            
+            getRecommendations(movie_id, display);
+
+        }
+    
+        );
+
+    };
+        
+function getRecommendations(movie_id, display) {
+    return fetch(`${baseURL}/movie/${movie_id}/recommendations?api_key=${APIKey}&language=en-US`)
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data)
+            let movie = data;
+            $.each(movie.results, (i, names) => {
+                if (i > 4) {
+                    return false;
+                } else {
+                display += `
+                <div class="rec-container">
+                <img class="recposter" data-value="${names.id}" src="https://image.tmdb.org/t/p/w185_and_h278_bestv2${names.poster_path}"><br>
+                <span class="recname">${names.original_title} </span>
+                </div>`
+                
+                }
+            }).slice(0, 5);
+            $("#movies").html(display);
+            $(".rec-container").click(e => {
+                getMovieDetails(e.target.dataset.value);
+              })
+        });
+        
+        
+}
 
