@@ -46,6 +46,7 @@ h3{
 .recposter {
     width: 70px;
     height: 100px;
+    cursor: pointer;
 }
 .rec-container {
     top: 400px;
