@@ -54,9 +54,14 @@ h3{
 }
 
 .recposter {
-    width: 70px;
-    height: 100px;
+    width: 200px;
+    height: 300px;
     cursor: pointer;
+}
+.recposter:hover {
+    border: solid;
+    border-color: crimson;
+    border-width: 4px;
 }
 
 .rec-container {
@@ -65,11 +70,10 @@ h3{
     display: inline-block;
     text-align: center;
     width: 250px;
-    border: solid;
-    border-color: darkorange;
-    border-width: 4px;
-    background-color: beige;
+    background: #212529;
     margin: 10px;
+    align-items: center;
+
 }
 
 .title, .desc, .genre{
