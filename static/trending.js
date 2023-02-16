@@ -25,6 +25,7 @@ function getTrending() {
       $("#movies").html(display);
       $(".posters").click(e => {
         getMovieDetails(e.target.dataset.value);
+        document.getElementById("trending-text").style.display = "none";
       })
     })
 };
