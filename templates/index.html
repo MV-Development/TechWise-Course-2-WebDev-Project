@@ -3,5 +3,11 @@
 <h1>Welcome to CineBuddy</h1>
 
 <p>Login, register, or leave</p>
+<div class="trending-container">
+    <div id="movies" class="row"></div>
+  </div>
 
+<script src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script src="{{url_for('static', filename='trending.js')}}"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/movies.css') }}">
 {% endblock %}
