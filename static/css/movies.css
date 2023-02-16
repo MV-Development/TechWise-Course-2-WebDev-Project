@@ -1,3 +1,6 @@
+*{
+	font-family: "Rockwell", "Rockwell";
+}
 .movie-container {
     top: 400px;
     vertical-align: top;
@@ -8,9 +11,13 @@
     margin: 10px;
     align-items: center;
 }
+p {
+	font-size: 40px;
+	text-align: center;
+	color: ivory;
+}
 
 h3{
-    font-family: "Rockwell", "Rockwell";
 	font-size: 50px;
 	text-align: center;
 	color: ivory;
