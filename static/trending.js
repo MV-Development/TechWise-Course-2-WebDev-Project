@@ -47,7 +47,7 @@ function getMovieDetails(movie_id) {
                 display += `<span class="genre">${genre.name} </span>`
 
             })
-            
+            display += `<p> Recommendations</p>`
             
             getRecommendations(movie_id, display);
 
