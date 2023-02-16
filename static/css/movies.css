@@ -4,12 +4,9 @@
     display: inline-block;
     text-align: center;
     width: 300px;
-    border: solid;
-    border-color: #212529;
-    border-width: 4px;
     background: #212529;
     margin: 10px;
-    margin-right: 13px;
+    align-items: center;
 }
 
 h3{
@@ -20,8 +17,7 @@ h3{
 }
 
 #movies {
-    position: absolute;
-    margin-left: -5px;
+    position: relative;
 }
 
 .posters {
@@ -29,13 +25,19 @@ h3{
     width: 200px;
     height: 300px;
     cursor: pointer;
+}
 
+.posters:hover {
+    border: solid;
+    border-color: crimson;
+    border-width: 4px;
 }
 
 .caption {
     display: block;
     color: white;
 }
+
 #searchBar {
     position: center;
     margin-top: 20px;
@@ -43,11 +45,13 @@ h3{
     margin-left: auto;
     margin-right: auto;
 }
+
 .recposter {
     width: 70px;
     height: 100px;
     cursor: pointer;
 }
+
 .rec-container {
     top: 400px;
     vertical-align: top;
@@ -69,6 +73,7 @@ h3{
     margin-left: 35%;
     padding: 20px;
 }
+
 #prev {
     margin-right: 30px;
     width: 100px;
@@ -78,5 +83,6 @@ h3{
     width: 100px;
     height: 50px;
 }
+
 
 
