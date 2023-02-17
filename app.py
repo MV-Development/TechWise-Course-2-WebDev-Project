@@ -299,7 +299,6 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
-            # Hash the password!!!
             # hashed_pw = generate_password_hash(
             # form.password_hash.data, "sha256")
             user = Users(username=form.username.data, name=form.name.data, email=form.email.data,
