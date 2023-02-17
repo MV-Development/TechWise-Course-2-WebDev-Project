@@ -22,11 +22,6 @@ get_flashed_messages() %}
     }}
     <br />
 
-    {{ form.password_hash.label(class="form-label") }} {{
-    form.password_hash(class="form-control", value=name_to_update.password_hash)
-    }}
-    <br />
-
     {{ form.submit(class="btn btn-secondary") }}
   </form>
 </div>

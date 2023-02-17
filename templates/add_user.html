@@ -13,19 +13,7 @@ get_flashed_messages() %}
 
 {% endfor %} {% if name %}
 <h1>User Added!</h1>
-<br /><br />
-<table class="table table-hover table-bordered table-striped">
-  {% for our_user in our_users %}
-  <tr>
-    <td>
-      {{ our_user.id }}.
-      <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> -
-      {{ our_user.email }} - {{ our_user.favorite_movie }} -
-      <a href="{{ url_for('delete', id=our_user.id)}}">Delete</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+<br />
 
 {% else %}
 <h1>New User:</h1>
@@ -60,17 +48,5 @@ get_flashed_messages() %}
   </form>
 </div>
 <br /><br /><br />
-<!-- <table class="table table-hover table-bordered table-striped">
-  {% for our_user in our_users %}
-  <tr>
-    <td>
-      {{ our_user.id }}.
-      <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> -
-      {{our_user.username }} - {{ our_user.email }} - {{ our_user.favorite_movie
-      }} - PW: {{ our_user.password_hash }} -
-      <a href="{{ url_for('delete', id=our_user.id)}}">Delete</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table> -->
+
 {% endif %} {% endblock %}

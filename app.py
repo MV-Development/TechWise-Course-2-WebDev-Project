@@ -127,10 +127,10 @@ def resetToken(token):
         db.session.commit()
         try:
             db.session.commit()
-            flash("User Updated Successfully!")
+            flash("Password Updated Successfully!")
             return render_template("changepass.html",
                                    form=form,
-                                   name_to_update=name_to_update, id=id)
+                                   name_to_update=name_to_update.name, id=id)
         except:
             flash("Error!  Looks like there was a problem...try again!")
             return render_template("changepass.html",
@@ -202,6 +202,7 @@ def dashboard():
 
     return render_template('dashboard.html')
 
+
 @app.route('/movies', methods=['GET', 'POST'])
 @login_required
 def movies():
@@ -218,8 +219,6 @@ def movies():
 
             pic_filename = secure_filename(name_to_update.profile_pic.filename)
 
-
-            
         else:
             db.session.commit()
             flash("User Updated Successfully!")
@@ -233,6 +232,7 @@ def movies():
                                id=id)
 
     return render_template('movieDetails.html')
+
 
 @app.route('/delete/<int:id>')
 @login_required
@@ -314,6 +314,8 @@ def add_user():
         form.password_hash.data = ''
 
         flash("User Added Successfully!")
+    else:
+        flash("Passwords did not match!")
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html",
                            form=form,
@@ -339,21 +341,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("500.html"), 500
-
-
-@app.route('/name', methods=['GET', 'POST'])
-def name():
-    name = None
-    form = NamerForm()
-    # Validate Form
-    if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ''
-        flash("Form Submitted Successfully!")
-
-    return render_template("name.html",
-                           name=name,
-                           form=form)
 
 
 class Posts(db.Model):
