@@ -53,17 +53,6 @@ def base():
     return dict(form=form)
 
 
-@app.route('/admin')
-@login_required
-def admin():
-    id = current_user.id
-    if id == 1:
-        return render_template("admin.html")
-    else:
-        flash("Sorry you must be the Admin to access the Admin Page...")
-        return redirect(url_for('dashboard'))
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -106,7 +95,7 @@ def goodjob():
     message = f'''
     Click link to reset password.
 
-    goodjob/''' + token
+    https://www.youtube.com/goodjob/''' + token
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
