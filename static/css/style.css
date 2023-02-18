@@ -24,7 +24,7 @@ h2 {
 
 .trend {
 	font-size: 40px;
-	text-align: left;
+	text-align: center;
 	color: ivory;
 	font-family: Gloock;
 }
@@ -43,9 +43,6 @@ body {
 	font-size: 12px;
 }
 
-.navbar-brand a{
-	font-family: Gloock;
-}
 .navbar-brand {
 	height: 80px;
 	font-size: 30px;
