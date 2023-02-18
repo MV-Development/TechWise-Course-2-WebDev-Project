@@ -137,3 +137,7 @@ div#page-buttons.movie-container{
     display: flex;
     font-family: WorkSans;
 }
+
+#navbarSupportedContent{
+	padding-top: 10px;
+}
