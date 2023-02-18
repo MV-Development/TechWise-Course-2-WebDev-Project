@@ -4,6 +4,11 @@
 }
 
 @font-face {
+	font-family: WorkSansItalics;
+	src: url(/static/font/WorkSans-Italic-VariableFont_wght.ttf);
+}
+
+@font-face {
     font-family: Gloock;
     src: url(/static/font/Gloock-Regular.ttf);
 }
@@ -135,7 +140,7 @@ div#page-buttons.movie-container{
 .genre {
     font-size: 15px;
     display: flex;
-    font-family: WorkSans;
+    font-family: WorkSansItalics;
 }
 
 #navbarSupportedContent{
