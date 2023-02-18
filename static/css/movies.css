@@ -1,6 +1,13 @@
-*{
-	font-family: "Rockwell", "Rockwell";
+@font-face {
+	font-family: WorkSans;
+	src: url(/static/font/WorkSans-VariableFont_wght.ttf);
 }
+
+@font-face {
+    font-family: Gloock;
+    src: url(/static/font/Gloock-Regular.ttf);
+}
+
 .movie-container {
     top: 400px;
     vertical-align: top;
@@ -15,12 +22,14 @@ p {
 	font-size: 40px;
 	text-align: center;
 	color: ivory;
+    font-family: Gloock;
 }
 
 h3{
 	font-size: 50px;
 	text-align: center;
 	color: ivory;
+    font-family: Gloock;
 }
 
 #movies {
@@ -43,6 +52,7 @@ h3{
 .caption {
     display: block;
     color: white;
+    font-family: WorkSans;
 }
 
 .recname {
@@ -114,15 +124,16 @@ div#page-buttons.movie-container{
 }
 .title {
     margin-bottom: 50px;
-    font-size: 28px;
+    font-size: 30px;
+    font-family: Gloock;
 }
 .desc {
-    font-size: 18px;
+    font-size: 16px;
+    font-family: WorkSans;
 }
 
 .genre {
     font-size: 15px;
     display: flex;
+    font-family: WorkSans;
 }
-
-
