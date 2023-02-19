@@ -1,27 +1,37 @@
-*{
-	font-family: "Rockwell", "Rockwell";
+@font-face {
+	font-family: Gloock;
+	src: url(/static/font/Gloock-Regular.ttf);
 }
+
+@font-face {
+	font-family: WorkSans;
+	src: url(/static/font/WorkSans-VariableFont_wght.ttf);
+}
+
 h1 {
 	color: ivory;
 	text-align: center;
 	font-size:60px;
+	font-family: Gloock;
 }
 
 h2 {
 	font-size: 50px;
 	text-align: center;
 	color: ivory;
+	font-family: Gloock;
 }
 
 .trend {
 	font-size: 40px;
-	text-align: left;
+	text-align: center;
 	color: ivory;
+	font-family: Gloock;
 }
 
 body {
 	background: #212529;
-	font-family: "Rockwell", "Rockwell";
+	font-family: WorkSans;
 }
 
 #demo{
@@ -37,4 +47,9 @@ body {
 	height: 80px;
 	font-size: 30px;
 	color: #2879C0;
+	font-family: Gloock;
+}
+
+#navbarSupportedContent{
+	padding-top: 10px;
 }

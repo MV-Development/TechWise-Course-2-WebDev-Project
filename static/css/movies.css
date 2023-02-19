@@ -1,6 +1,18 @@
-*{
-	font-family: "Rockwell", "Rockwell";
+@font-face {
+	font-family: WorkSans;
+	src: url(/static/font/WorkSans-VariableFont_wght.ttf);
 }
+
+@font-face {
+	font-family: WorkSansItalics;
+	src: url(/static/font/WorkSans-Italic-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: Gloock;
+    src: url(/static/font/Gloock-Regular.ttf);
+}
+
 .movie-container {
     top: 400px;
     vertical-align: top;
@@ -15,12 +27,14 @@ p {
 	font-size: 40px;
 	text-align: center;
 	color: ivory;
+    font-family: Gloock;
 }
 
 h3{
 	font-size: 50px;
 	text-align: center;
 	color: ivory;
+    font-family: Gloock;
 }
 
 #movies {
@@ -43,6 +57,7 @@ h3{
 .caption {
     display: block;
     color: white;
+    font-family: WorkSans;
 }
 
 .recname {
@@ -94,15 +109,26 @@ h3{
     width: 100px;
     height: 50px;
 }
+
 #next {
     width: 100px;
     height: 50px;
 }
 
+#prev:hover {
+    border: solid;
+    border-color: #9CBFFF;
+    border-width: 4px;
+}
+#next:hover {
+    border: solid;
+    border-color: #9CBFFF;
+    border-width: 4px;
+}
+
 div#page-buttons.movie-container{
     margin: 10px;
 }
-
 
 .row {
     justify-content: center;
@@ -110,19 +136,32 @@ div#page-buttons.movie-container{
 
 .poster{
     float: left;
-    margin: 25px 25px 15px 0px;
+    margin: 35px 25px 15px 0px;
 }
+
+.poster1{
+    float: left;
+    margin: 25px 25px 15px 0px;
+    padding-top: 33px;
+}
+
 .title {
     margin-bottom: 50px;
-    font-size: 28px;
+    font-size: 30px;
+    font-family: Gloock;
 }
+
 .desc {
-    font-size: 18px;
+    font-size: 16px;
+    font-family: WorkSans;
 }
 
 .genre {
     font-size: 15px;
     display: flex;
+    font-family: WorkSansItalics;
 }
 
-
+#navbarSupportedContent{
+	padding-top: 10px;
+}
