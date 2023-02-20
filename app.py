@@ -53,7 +53,7 @@ def base():
     return dict(form=form)
 
 
-@app.route('/cine-buddy/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -71,7 +71,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/cine-buddy/reset', methods=['GET', 'POST'])
+@app.route('/reset', methods=['GET', 'POST'])
 def reset():
     form = ResetForm()
     if form.validate_on_submit():
@@ -85,7 +85,7 @@ def reset():
     return render_template('reset.html', title="Forgot Password", form=form)
 
 
-@app.route('/cine-buddy/goodjob', methods=['GET', 'POST'])
+@app.route('/goodjob', methods=['GET', 'POST'])
 def goodjob():
     email = request.form.get("email")
     user = Users.query.filter_by(email=email).first()
@@ -95,7 +95,7 @@ def goodjob():
     message = f'''
     Click link to reset password.
 
-    https://www.youtube.com/goodjob/''' + token
+    127.0.0.1:5000/goodjob/''' + token
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
@@ -104,7 +104,7 @@ def goodjob():
     return render_template('goodjob.html', email=email, user=user.name)
 
 
-@app.route('/cine-buddy/goodjob/<token>', methods=['GET', 'POST'])
+@app.route('/goodjob/<token>', methods=['GET', 'POST'])
 def resetToken(token):
     name_to_update = Users.verify_token(token)
     if user is None:
@@ -133,7 +133,7 @@ def resetToken(token):
                                id=id)
 
 
-@app.route('/cine-buddy/logout', methods=['GET', 'POST'])
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
@@ -141,7 +141,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/cine-buddy/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     form = UserForm()
@@ -192,7 +192,7 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/cine-buddy/movies', methods=['GET', 'POST'])
+@app.route('/movies', methods=['GET', 'POST'])
 @login_required
 def movies():
     form = UserForm()
@@ -223,7 +223,7 @@ def movies():
     return render_template('movieDetails.html')
 
 
-@app.route('/cine-buddy/delete/<int:id>')
+@app.route('/delete/<int:id>')
 @login_required
 def delete(id):
     if id == current_user.id:
@@ -251,7 +251,7 @@ def delete(id):
         return redirect(url_for('dashboard'))
 
 
-@app.route('/cine-buddy/update/<int:id>', methods=['GET', 'POST'])
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
 def update(id):
     form = UserForm()
@@ -281,7 +281,7 @@ def update(id):
                                id=id)
 
 
-@app.route('/cine-buddy/user/add', methods=['GET', 'POST'])
+@app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
     name = None
     form = UserForm()
@@ -302,8 +302,7 @@ def add_user():
         form.password_hash.data = ''
 
         flash("User Added Successfully!")
-    else:
-        flash("Passwords did not match!")
+       # flash("Passwords did not match!")
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html",
                            form=form,
@@ -311,7 +310,7 @@ def add_user():
                            our_users=our_users)
 
 
-@app.route('/cine-buddy/')
+@app.route('/')
 def index():
     return render_template("index.html")
 
